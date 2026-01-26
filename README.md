@@ -1,4 +1,4 @@
-# info_wisata
+# latihan
 
 A new Flutter project.
 
