@@ -88,7 +88,6 @@ class ProfileScreen extends StatelessWidget {
         ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: () {
-          // TODO: aksi menu
         },
       ),
     );
