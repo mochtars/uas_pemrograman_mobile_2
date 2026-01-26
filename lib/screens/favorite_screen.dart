@@ -43,7 +43,7 @@ class FavoriteScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: GridView.builder(
-                itemCount: wisataList.length, // sementara pakai semua data
+                itemCount: wisataList.length,
                 gridDelegate:
                     const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
