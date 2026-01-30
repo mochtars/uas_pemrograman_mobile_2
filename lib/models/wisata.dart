@@ -7,6 +7,7 @@ class Wisata {
   final double rating;
   final double hargaTiket;
   final String jamBuka;
+  final String ditambahkanOleh;
 
   Wisata({
     required this.id,
@@ -17,6 +18,7 @@ class Wisata {
     required this.rating,
     required this.hargaTiket,
     required this.jamBuka,
+    this.ditambahkanOleh = '',
   });
 
   Map<String, dynamic> toJson() {
@@ -29,6 +31,7 @@ class Wisata {
       'rating': rating,
       'hargaTiket': hargaTiket,
       'jamBuka': jamBuka,
+      'ditambahkanOleh': ditambahkanOleh,
     };
   }
 
@@ -42,6 +45,7 @@ class Wisata {
       rating: (json['rating'] ?? 0.0).toDouble(),
       hargaTiket: (json['hargaTiket'] ?? 0.0).toDouble(),
       jamBuka: json['jamBuka'] ?? '',
+      ditambahkanOleh: json['ditambahkanOleh'] ?? '',
     );
   }
 }

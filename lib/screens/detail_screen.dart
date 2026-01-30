@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/wisata.dart';
+import '../widgets/wisata_image.dart';
 
 class DetailScreen extends StatefulWidget {
   final Wisata wisata;
@@ -24,8 +25,8 @@ class _DetailScreenState extends State<DetailScreen> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    widget.wisata.imageUrl,
+                  WisataImage(
+                    imageUrl: widget.wisata.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -137,6 +138,14 @@ class _DetailScreenState extends State<DetailScreen> {
                     title: 'Jam Buka',
                     content: widget.wisata.jamBuka,
                   ),
+                  if (widget.wisata.ditambahkanOleh.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    _buildInfoSection(
+                      icon: Icons.person,
+                      title: 'Ditambahkan oleh',
+                      content: widget.wisata.ditambahkanOleh,
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   const Text(
                     'Deskripsi',

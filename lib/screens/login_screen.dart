@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
@@ -35,18 +36,36 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-
+    try {
+      await AuthService.login(email, password);
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login berhasil!')),
         );
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        String message = 'Login gagal';
+        if (e.toString().contains('user-not-found')) {
+          message = 'Akun tidak ditemukan';
+        } else if (e.toString().contains('wrong-password') ||
+            e.toString().contains('invalid-credential')) {
+          message = 'Email atau password salah';
+        } else if (e.toString().contains('invalid-email')) {
+          message = 'Format email tidak valid';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
