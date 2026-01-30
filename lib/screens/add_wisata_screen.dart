@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/wisata_model.dart';
+import '../models/wisata.dart';
 
 class AddWisataScreen extends StatefulWidget {
   const AddWisataScreen({super.key});
@@ -44,6 +44,7 @@ class _AddWisataScreenState extends State<AddWisataScreen> {
       });
 
       Future.delayed(const Duration(seconds: 1), () {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
         });

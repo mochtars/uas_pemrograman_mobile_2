@@ -95,7 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               end: Alignment.bottomCenter,
               colors: [
                 Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
               ],
             ),
           ),
@@ -229,7 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           _agreeToTerms = value ?? false;
                         });
                       },
-                      fillColor: MaterialStateProperty.all(Colors.white),
+                      fillColor: WidgetStateProperty.all(Colors.white),
                       checkColor: Theme.of(context).colorScheme.primary,
                     ),
                     Expanded(
