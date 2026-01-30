@@ -45,8 +45,8 @@ class FavoriteScreen extends StatelessWidget {
               child: GridView.builder(
                 itemCount: wisataList.length,
                 gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 250,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   childAspectRatio: 0.75,
@@ -76,7 +76,7 @@ class FavoriteScreen extends StatelessWidget {
                               top: Radius.circular(16),
                             ),
                             child: Image.network(
-                              wisata.gambar,
+                              wisata.imageUrl,
                               height: 120,
                               width: double.infinity,
                               fit: BoxFit.cover,

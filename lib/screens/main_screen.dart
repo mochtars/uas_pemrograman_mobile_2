@@ -4,55 +4,25 @@ import 'favorite_screen.dart';
 import 'profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  final int currentIndex;
-
-  const MainScreen({super.key, required this.currentIndex});
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late int _currentIndex;
+  int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
+  final List<Widget> _screens = const [
     HomeScreen(),
     FavoriteScreen(),
     ProfileScreen(),
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.currentIndex;
-  }
-
-  void _onTap(int index) {
-    if (index == _currentIndex) return;
-
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/');
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, '/favorite');
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/profile');
-        break;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-      body: _pages[_currentIndex],
-
+      body: _screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -60,27 +30,33 @@ class _MainScreenState extends State<MainScreen> {
               Color(0xFF2193b0),
               Color(0xFF6dd5ed),
             ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: _onTap,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
           backgroundColor: Colors.transparent,
           elevation: 0,
-          type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white70,
+          unselectedItemColor: Colors.white60,
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: 'Home',
+              label: 'Beranda',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
+              icon: Icon(Icons.favorite),
               label: 'Favorit',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
+              icon: Icon(Icons.person),
               label: 'Profil',
             ),
           ],

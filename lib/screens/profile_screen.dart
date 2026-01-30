@@ -24,8 +24,8 @@ class ProfileScreen extends StatelessWidget {
                 bottomRight: Radius.circular(28),
               ),
             ),
-            child: Column(
-              children: const [
+            child: const Column(
+              children: [
                 CircleAvatar(
                   radius: 40,
                   backgroundImage:
@@ -87,8 +87,7 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-        },
+        onTap: () {},
       ),
     );
   }

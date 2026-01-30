@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "latihan" "\0"
+            VALUE "FileDescription", "info_wisata" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "latihan" "\0"
+            VALUE "InternalName", "info_wisata" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "latihan.exe" "\0"
-            VALUE "ProductName", "latihan" "\0"
+            VALUE "OriginalFilename", "info_wisata.exe" "\0"
+            VALUE "ProductName", "info_wisata" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
