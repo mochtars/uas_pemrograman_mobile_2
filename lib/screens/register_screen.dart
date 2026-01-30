@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -27,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
+  void _register() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -67,21 +68,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isLoading = true;
     });
 
-    // Simulasi register
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false;
-      });
-
+    try {
+      await AuthService.register(email, password, name);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Registrasi berhasil!')));
-
-        // Navigate back to login
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registrasi berhasil!')),
+        );
         Navigator.of(context).pushReplacementNamed('/login');
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        String message = 'Registrasi gagal';
+        if (e.toString().contains('email-already-in-use')) {
+          message = 'Email sudah terdaftar';
+        } else if (e.toString().contains('weak-password')) {
+          message = 'Password terlalu lemah';
+        } else if (e.toString().contains('invalid-email')) {
+          message = 'Format email tidak valid';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override

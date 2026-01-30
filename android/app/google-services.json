@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "718039359590",
+    "project_id": "uaspemmob2-db71f",
+    "storage_bucket": "uaspemmob2-db71f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718039359590:android:301e971cc770e57e6a4da7",
+        "android_client_info": {
+          "package_name": "com.example.latihan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUGuVutWCZC4ACbpF2hPAQ5XRu8lGiCcI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

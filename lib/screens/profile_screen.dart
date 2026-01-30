@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       body: Column(
         children: [
@@ -24,26 +27,26 @@ class ProfileScreen extends StatelessWidget {
                 bottomRight: Radius.circular(28),
               ),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 40,
                   backgroundImage:
                       NetworkImage('https://i.pravatar.cc/150'),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
-                  'Markudin',
-                  style: TextStyle(
+                  user?.displayName ?? 'Pengguna',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'xxx@email.com',
-                  style: TextStyle(color: Colors.white70),
+                  user?.email ?? '-',
+                  style: const TextStyle(color: Colors.white70),
                 ),
               ],
             ),
@@ -56,10 +59,10 @@ class ProfileScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
-                _menuItem(Icons.person, 'Edit Profil'),
-                _menuItem(Icons.lock, 'Ubah Password'),
-                _menuItem(Icons.info, 'Tentang Aplikasi'),
-                _menuItem(Icons.logout, 'Logout', isLogout: true),
+                _menuItem(Icons.person, 'Edit Profil', context),
+                _menuItem(Icons.lock, 'Ubah Password', context),
+                _menuItem(Icons.info, 'Tentang Aplikasi', context),
+                _menuItem(Icons.logout, 'Logout', context, isLogout: true),
               ],
             ),
           ),
@@ -68,7 +71,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _menuItem(IconData icon, String title,
+  Widget _menuItem(IconData icon, String title, BuildContext context,
       {bool isLogout = false}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -87,7 +90,33 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {},
+        onTap: isLogout
+            ? () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Logout'),
+                    content: const Text('Apakah Anda yakin ingin logout?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Batal'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(context, '/login');
+                          }
+                        },
+                        child: const Text('Logout'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            : () {},
       ),
     );
   }

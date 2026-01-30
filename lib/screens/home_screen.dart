@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart' hide CarouselController;
 import 'package:carousel_slider/carousel_slider.dart';
-import '../data/wisata_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/firestore_service.dart';
 import '../models/wisata.dart';
+import '../widgets/wisata_image.dart';
 import 'detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,30 +15,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
-  late List<Wisata> _wisataList;
-  List<Wisata> _filteredWisataList = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    _wisataList = List<Wisata>.from(wisataList);
-    _filteredWisataList = _wisataList;
-  }
-
-  void _filterWisata(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredWisataList = _wisataList;
-      } else {
-        _filteredWisataList = _wisataList
-            .where(
-              (wisata) =>
-                  wisata.nama.toLowerCase().contains(query.toLowerCase()) ||
-                  wisata.lokasi.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
-      }
-    });
+    FirestoreService.seedData();
   }
 
   @override
@@ -45,305 +29,335 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  List<Wisata> _filterWisata(List<Wisata> list) {
+    if (_searchQuery.isEmpty) return list;
+    return list
+        .where(
+          (wisata) =>
+              wisata.nama.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              wisata.lokasi.toLowerCase().contains(_searchQuery.toLowerCase()),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: _buildDrawer(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/add_wisata').then((result) {
-            if (result != null && result is Wisata) {
-              setState(() {
-                _wisataList.add(result);
-                _filterWisata(_searchController.text);
-              });
-            }
-          });
+          Navigator.pushNamed(context, '/add_wisata');
         },
         child: const Icon(Icons.add),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // ================= HEADER WRAPPER =================
-            Container(
-              padding: const EdgeInsets.only(
-                top: 48,
-                left: 16,
-                right: 16,
-                bottom: 24,
-              ),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF2193b0),
-                    Color(0xFF6dd5ed),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(28),
-                  bottomRight: Radius.circular(28),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ================= NAVBAR =================
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: StreamBuilder<List<Wisata>>(
+        stream: FirestoreService.getWisata(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final wisataList = snapshot.data ?? [];
+          final filteredList = _filterWisata(wisataList);
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // ================= HEADER WRAPPER =================
+                Container(
+                  padding: const EdgeInsets.only(
+                    top: 48,
+                    left: 16,
+                    right: 16,
+                    bottom: 24,
+                  ),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF2193b0),
+                        Color(0xFF6dd5ed),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(28),
+                      bottomRight: Radius.circular(28),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // ================= NAVBAR =================
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Builder(
-                            builder: (context) => GestureDetector(
-                              onTap: () => Scaffold.of(context).openDrawer(),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'Info Wisata',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_none,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // ================= SUBTITLE =================
-                  const Text(
-                    'Temukan destinasi favoritmu',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // ================= SEARCH BAR =================
-                  TextField(
-                    controller: _searchController,
-                    onChanged: _filterWisata,
-                    style: const TextStyle(color: Colors.black87),
-                    decoration: InputDecoration(
-                      hintText: 'Cari wisata atau lokasi...',
-                      hintStyle: TextStyle(color: Colors.grey[500]),
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, color: Colors.grey),
-                              onPressed: () {
-                                _searchController.clear();
-                                _filterWisata('');
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ================= CAROUSEL =================
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: 180,
-                      autoPlay: true,
-                      enlargeCenterPage: true,
-                    ),
-                    items: _wisataList.map((wisata) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => DetailScreen(wisata: wisata),
-                            ),
-                          );
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Stack(
-                            fit: StackFit.expand,
+                          Row(
                             children: [
-                              Image.network(
-                                wisata.imageUrl,
-                                fit: BoxFit.cover,
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.black.withValues(alpha: 0.6),
-                                      Colors.transparent,
-                                    ],
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.topCenter,
+                              Builder(
+                                builder: (context) => GestureDetector(
+                                  onTap: () =>
+                                      Scaffold.of(context).openDrawer(),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Icon(
+                                      Icons.menu,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                left: 12,
-                                bottom: 12,
-                                child: Text(
-                                  wisata.nama,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Info Wisata',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // ================= BODY WRAPPER =================
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF5F7FA),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-
-                  // ================= SECTION TITLE =================
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'Rekomendasi Wisata',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Lihat semua',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // ================= EMPTY STATE =================
-                  if (_filteredWisataList.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.location_off,
-                              size: 64,
-                              color: Colors.grey[400],
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            const SizedBox(height: 16),
+                            child: const Icon(
+                              Icons.notifications_none,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // ================= SUBTITLE =================
+                      const Text(
+                        'Temukan destinasi favoritmu',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ================= SEARCH BAR =================
+                      TextField(
+                        controller: _searchController,
+                        onChanged: (query) {
+                          setState(() {
+                            _searchQuery = query;
+                          });
+                        },
+                        style: const TextStyle(color: Colors.black87),
+                        decoration: InputDecoration(
+                          hintText: 'Cari wisata atau lokasi...',
+                          hintStyle: TextStyle(color: Colors.grey[500]),
+                          prefixIcon:
+                              const Icon(Icons.search, color: Colors.grey),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear,
+                                      color: Colors.grey),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                )
+                              : null,
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 0),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // ================= CAROUSEL =================
+                      if (wisataList.isNotEmpty)
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            height: 180,
+                            autoPlay: true,
+                            enlargeCenterPage: true,
+                          ),
+                          items: wisataList.map((wisata) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        DetailScreen(wisata: wisata),
+                                  ),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    WisataImage(
+                                      imageUrl: wisata.imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.black
+                                                .withValues(alpha: 0.6),
+                                            Colors.transparent,
+                                          ],
+                                          begin: Alignment.bottomCenter,
+                                          end: Alignment.topCenter,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: 12,
+                                      bottom: 12,
+                                      child: Text(
+                                        wisata.nama,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ================= BODY WRAPPER =================
+                Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF5F7FA),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+
+                      // ================= SECTION TITLE =================
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
                             Text(
-                              'Tidak ada wisata ditemukan',
+                              'Rekomendasi Wisata',
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Lihat semua',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
 
-                  // ================= CARD CONTAINER =================
-                  if (_filteredWisataList.isNotEmpty)
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                      const SizedBox(height: 12),
+
+                      // ================= EMPTY STATE =================
+                      if (filteredList.isEmpty)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.location_off,
+                                  size: 64,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Tidak ada wisata ditemukan',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _filteredWisataList.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 250,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.75,
                         ),
-                        itemBuilder: (context, index) {
-                          final wisata = _filteredWisataList[index];
-                          return _buildWisataCard(wisata);
-                        },
-                      ),
-                    ),
 
-                  const SizedBox(height: 24),
-                ],
-              ),
+                      // ================= CARD CONTAINER =================
+                      if (filteredList.isNotEmpty)
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredList.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 250,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.75,
+                            ),
+                            itemBuilder: (context, index) {
+                              final wisata = filteredList[index];
+                              return _buildWisataCard(wisata);
+                            },
+                          ),
+                        ),
+
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -385,8 +399,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
-                    child: Image.network(
-                      wisata.imageUrl,
+                    child: WisataImage(
+                      imageUrl: wisata.imageUrl,
                       height: 120,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -484,6 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDrawer(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Drawer(
       child: Column(
         children: [
@@ -518,18 +533,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Pengguna',
-                  style: TextStyle(
+                Text(
+                  user?.displayName ?? 'Pengguna',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'user@wisataindonesia.com',
-                  style: TextStyle(
+                Text(
+                  user?.email ?? '',
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.white70,
                   ),
@@ -598,9 +613,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const Text('Batal'),
                     ),
                     TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacementNamed(context, '/login');
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(context, '/login');
+                        }
                       },
                       child: const Text('Logout'),
                     ),
