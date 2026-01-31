@@ -17,6 +17,12 @@ class MyWisataScreen extends StatelessWidget {
 
     return Scaffold(
       drawer: const AppDrawer(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/add_wisata');
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           // ===== HEADER =====

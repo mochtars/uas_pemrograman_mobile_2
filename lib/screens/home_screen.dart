@@ -8,6 +8,7 @@ import '../widgets/app_drawer.dart';
 import 'detail_screen.dart';
 import 'notification_screen.dart';
 import 'all_wisata_screen.dart';
+import 'search_result_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   late final Stream<List<Wisata>> _wisataStream;
-  String _searchQuery = '';
 
   @override
   void initState() {
@@ -32,17 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  List<Wisata> _filterWisata(List<Wisata> list) {
-    if (_searchQuery.isEmpty) return list;
-    return list
-        .where(
-          (wisata) =>
-              wisata.nama.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              wisata.lokasi.toLowerCase().contains(_searchQuery.toLowerCase()),
-        )
-        .toList();
   }
 
   @override
@@ -63,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           final wisataList = snapshot.data ?? [];
-          final filteredList = _filterWisata(wisataList);
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -205,29 +193,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       // ================= SEARCH BAR =================
                       TextField(
                         controller: _searchController,
-                        onChanged: (query) {
-                          setState(() {
-                            _searchQuery = query;
-                          });
+                        onSubmitted: (query) {
+                          final trimmed = query.trim();
+                          if (trimmed.isNotEmpty) {
+                            _searchController.clear();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    SearchResultScreen(query: trimmed),
+                              ),
+                            );
+                          }
                         },
+                        textInputAction: TextInputAction.search,
                         style: const TextStyle(color: Colors.black87),
                         decoration: InputDecoration(
                           hintText: 'Cari wisata atau lokasi...',
                           hintStyle: TextStyle(color: Colors.grey[500]),
                           prefixIcon:
                               const Icon(Icons.search, color: Colors.grey),
-                          suffixIcon: _searchController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear,
-                                      color: Colors.grey),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    setState(() {
-                                      _searchQuery = '';
-                                    });
-                                  },
-                                )
-                              : null,
                           filled: true,
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
@@ -354,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 12),
 
                       // ================= EMPTY STATE =================
-                      if (filteredList.isEmpty)
+                      if (wisataList.isEmpty)
                         Center(
                           child: Padding(
                             padding: const EdgeInsets.all(32),
@@ -379,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
 
                       // ================= CARD CONTAINER =================
-                      if (filteredList.isNotEmpty)
+                      if (wisataList.isNotEmpty)
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 12),
                           padding: const EdgeInsets.all(12),
@@ -397,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: filteredList.length,
+                            itemCount: wisataList.length,
                             gridDelegate:
                                 const SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 250,
@@ -406,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               childAspectRatio: 0.75,
                             ),
                             itemBuilder: (context, index) {
-                              final wisata = filteredList[index];
+                              final wisata = wisataList[index];
                               return _buildWisataCard(wisata);
                             },
                           ),
