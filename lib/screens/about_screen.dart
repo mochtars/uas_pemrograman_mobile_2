@@ -6,11 +6,11 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final members = [
-      'NamaAnggota1_NPM1',
-      'NamaAnggota2_NPM2',
-      'NamaAnggota3_NPM3',
-      'NamaAnggota4_NPM4',
-      'NamaAnggota5_NPM5',
+      'Alfarisi Azhar_23552011180',
+      'Beni Mochtar Samiraharja_23552011382',
+      'Ferlya Tabitha Permadi_23552011131',
+      'Noer Azis Khaerudin_23552011183',
+      'Susi Martini_23552011178',
     ];
 
     return Scaffold(
@@ -192,7 +192,7 @@ class AboutScreen extends StatelessWidget {
                   const Divider(),
                   const SizedBox(height: 12),
                   Text(
-                    '\u00a9 2025 Kelompok 3 — UAS Pemrograman Mobile',
+                    '\u00a9 2026 Kelompok 3 — UAS Pemrograman Mobile 2',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 13,
@@ -217,3 +217,4 @@ class AboutScreen extends StatelessWidget {
     );
   }
 }
+
