@@ -14,6 +14,10 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 | 4 | Noer Azis Khaerudin | 23552011183 |
 | 5 | Susi Martini | 23552011178 |
 
+## Demo Video
+
+[Download Demo Video](screenshots/Demo_video.mp4)
+
 ## Fitur
 
 ### Autentikasi
@@ -93,10 +97,6 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Pull-to-refresh pada daftar wisata
 - Seed data otomatis saat database kosong
 - Halaman "Tentang Aplikasi"
-
-## Demo Video
-
-[Download Demo Video](screenshots/Demo_video.mp4)
 
 ## Teknologi yang digunakan
 
