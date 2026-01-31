@@ -41,18 +41,18 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Filter berdasarkan nama wisata dan lokasi
 - Search bar di halaman hasil untuk mengubah query pencarian
 
-| Pencarian | |
-|-----------|---|
-| ![Pencarian](screenshots/pencarian.jpeg) | |
+| Pencarian |
+|-----------|
+| <img src="screenshots/pencarian.jpeg" width="50%"> |
 
 ### Detail Wisata
 - Menampilkan gambar, nama, lokasi, deskripsi, jam buka, dan harga tiket
 - Sistem rating bintang (per-user, dihitung rata-rata)
 - Tombol favorit untuk menyimpan wisata
 
-| Detail Wisata | |
-|---------------|---|
-| ![Detail](screenshots/detail_wisata.jpeg) | |
+| Detail Wisata |
+|---------------|
+| <img src="screenshots/detail_wisata.jpeg" width="50%"> |
 
 ### Wisata Favorit
 - Halaman khusus menampilkan daftar wisata yang telah difavoritkan
@@ -76,9 +76,9 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Badge notifikasi pada icon bell di header
 - Menampilkan wisata baru yang belum dilihat oleh user
 
-| Notifikasi | |
-|------------|---|
-| ![Notifikasi](screenshots/notifikasi.jpeg) | |
+| Notifikasi |
+|------------|
+| <img src="screenshots/notifikasi.jpeg" width="50%"> |
 
 ### Profil
 - Halaman profil user
@@ -93,6 +93,10 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Pull-to-refresh pada daftar wisata
 - Seed data otomatis saat database kosong
 - Halaman "Tentang Aplikasi"
+
+## Demo Video
+
+[Download Demo Video](screenshots/Demo_video.mp4)
 
 ## Teknologi yang digunakan
 
