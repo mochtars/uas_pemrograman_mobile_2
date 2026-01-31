@@ -20,9 +20,11 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Login dan Register menggunakan Firebase Authentication (email & password)
 - Splash screen dengan auto-redirect ke halaman utama jika sudah login
 
-| Splash | Login | Register |
-|--------|-------|----------|
-| ![Splash](screenshots/splash.jpeg) | ![Login](screenshots/login.jpeg) | ![Register](screenshots/register.jpeg) |
+| Splash | Login |
+|--------|-------|
+| ![Splash](screenshots/splash.jpeg) | ![Login](screenshots/login.jpeg) |
+| Register | |
+| ![Register](screenshots/register.jpeg) | |
 
 ### Beranda
 - Carousel slider menampilkan wisata unggulan
@@ -39,18 +41,18 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Filter berdasarkan nama wisata dan lokasi
 - Search bar di halaman hasil untuk mengubah query pencarian
 
-| Pencarian |
-|-----------|
-| ![Pencarian](screenshots/pencarian.jpeg) |
+| Pencarian | |
+|-----------|---|
+| ![Pencarian](screenshots/pencarian.jpeg) | |
 
 ### Detail Wisata
 - Menampilkan gambar, nama, lokasi, deskripsi, jam buka, dan harga tiket
 - Sistem rating bintang (per-user, dihitung rata-rata)
 - Tombol favorit untuk menyimpan wisata
 
-| Detail Wisata |
-|---------------|
-| ![Detail](screenshots/detail_wisata.jpeg) |
+| Detail Wisata | |
+|---------------|---|
+| ![Detail](screenshots/detail_wisata.jpeg) | |
 
 ### Wisata Favorit
 - Halaman khusus menampilkan daftar wisata yang telah difavoritkan
@@ -64,17 +66,19 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Hapus wisata (termasuk subcollection ratings)
 - Halaman "Kontribusi Saya" menampilkan wisata yang ditambahkan oleh user yang sedang login
 
-| Kontribusi | Tambah Wisata | Edit Wisata |
-|------------|---------------|-------------|
-| ![Kontribusi](screenshots/kontribusi.jpeg) | ![Tambah](screenshots/tambah_wisata.jpeg) | ![Edit](screenshots/edit_wisata.jpeg) |
+| Kontribusi | Tambah Wisata |
+|------------|---------------|
+| ![Kontribusi](screenshots/kontribusi.jpeg) | ![Tambah](screenshots/tambah_wisata.jpeg) |
+| Edit Wisata | |
+| ![Edit](screenshots/edit_wisata.jpeg) | |
 
 ### Notifikasi
 - Badge notifikasi pada icon bell di header
 - Menampilkan wisata baru yang belum dilihat oleh user
 
-| Notifikasi |
-|------------|
-| ![Notifikasi](screenshots/notifikasi.jpeg) |
+| Notifikasi | |
+|------------|---|
+| ![Notifikasi](screenshots/notifikasi.jpeg) | |
 
 ### Profil
 - Halaman profil user
