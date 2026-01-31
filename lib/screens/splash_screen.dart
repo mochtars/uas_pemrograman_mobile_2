@@ -65,74 +65,64 @@ class _SplashScreenState extends State<SplashScreen>
             ],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo/Icon dengan animasi scale dan fade
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Column(
-                    children: [
-                      // Icon
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.travel_explore,
-                          size: 60,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+        child: Column(
+          children: [
+            const Spacer(),
+            // Logo/Icon dengan animasi scale dan fade
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Column(
+                  children: [
+                    // Icon
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 24),
-                      // App Title
-                      const Text(
-                        'Wisata Indonesia',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      child: Icon(
+                        Icons.travel_explore,
+                        size: 60,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      const SizedBox(height: 8),
-                      // Subtitle
-                      const Text(
-                        'Jelajahi Keindahan Indonesia',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                          fontStyle: FontStyle.italic,
-                        ),
+                    ),
+                    const SizedBox(height: 24),
+                    // App Title
+                    const Text(
+                      'Wisata Indonesia',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Subtitle
+                    const Text(
+                      'Jelajahi Keindahan Indonesia',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white70,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-      bottomSheet: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+            ),
+            const Spacer(),
             // Loading indicator
-            SizedBox(
+            const SizedBox(
               width: 40,
               height: 40,
               child: CircularProgressIndicator(
@@ -148,6 +138,7 @@ class _SplashScreenState extends State<SplashScreen>
                 fontSize: 14,
               ),
             ),
+            const SizedBox(height: 32),
           ],
         ),
       ),

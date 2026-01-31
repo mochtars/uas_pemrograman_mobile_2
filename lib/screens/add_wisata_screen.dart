@@ -18,26 +18,42 @@ class _AddWisataScreenState extends State<AddWisataScreen> {
   final TextEditingController _namaController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
   final TextEditingController _lokasiController = TextEditingController();
-  final TextEditingController _ratingController = TextEditingController(
-    text: '4.5',
-  );
   final TextEditingController _hargaTiketController = TextEditingController(
     text: '0',
   );
-  final TextEditingController _jamBukaController = TextEditingController(
-    text: '08:00 - 18:00',
-  );
+  TimeOfDay _jamBuka = const TimeOfDay(hour: 8, minute: 0);
+  TimeOfDay _jamTutup = const TimeOfDay(hour: 18, minute: 0);
   bool _isLoading = false;
   Uint8List? _selectedImageBytes;
+
+  String _formatTime(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  Future<void> _pickTime({required bool isOpen}) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: isOpen ? _jamBuka : _jamTutup,
+    );
+    if (picked != null) {
+      setState(() {
+        if (isOpen) {
+          _jamBuka = picked;
+        } else {
+          _jamTutup = picked;
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
     _namaController.dispose();
     _deskripsiController.dispose();
     _lokasiController.dispose();
-    _ratingController.dispose();
     _hargaTiketController.dispose();
-    _jamBukaController.dispose();
     super.dispose();
   }
 
@@ -76,10 +92,11 @@ class _AddWisataScreenState extends State<AddWisataScreen> {
           deskripsi: _deskripsiController.text.trim(),
           lokasi: _lokasiController.text.trim(),
           imageUrl: imageUrl,
-          rating: double.parse(_ratingController.text),
+          rating: 0,
           hargaTiket: double.parse(_hargaTiketController.text),
-          jamBuka: _jamBukaController.text.trim(),
+          jamBuka: '${_formatTime(_jamBuka)} - ${_formatTime(_jamTutup)}',
           ditambahkanOleh: user?.displayName ?? user?.email ?? 'Anonim',
+          createdByUid: user?.uid ?? '',
         );
 
         await FirestoreService.addWisata(newWisata);
@@ -217,30 +234,6 @@ class _AddWisataScreenState extends State<AddWisataScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Rating
-              TextFormField(
-                controller: _ratingController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Rating (0-5)',
-                  prefixIcon: const Icon(Icons.star),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Rating tidak boleh kosong';
-                  }
-                  final rating = double.tryParse(value);
-                  if (rating == null || rating < 0 || rating > 5) {
-                    return 'Rating harus antara 0-5';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
               // Harga Tiket
               TextFormField(
                 controller: _hargaTiketController,
@@ -265,23 +258,44 @@ class _AddWisataScreenState extends State<AddWisataScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Jam Buka
-              TextFormField(
-                controller: _jamBukaController,
-                decoration: InputDecoration(
-                  labelText: 'Jam Buka',
-                  hintText: 'Contoh: 08:00 - 18:00',
-                  prefixIcon: const Icon(Icons.access_time),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+              // Jam Buka & Tutup
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _pickTime(isOpen: true),
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Jam Buka',
+                          prefixIcon: const Icon(Icons.access_time),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(_formatTime(_jamBuka)),
+                      ),
+                    ),
                   ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Jam buka tidak boleh kosong';
-                  }
-                  return null;
-                },
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('-', style: TextStyle(fontSize: 20)),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _pickTime(isOpen: false),
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Jam Tutup',
+                          prefixIcon: const Icon(Icons.access_time),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(_formatTime(_jamTutup)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
 
