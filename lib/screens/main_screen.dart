@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'favorite_screen.dart';
+import 'my_wisata_screen.dart';
 import 'profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -13,10 +14,20 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    FavoriteScreen(),
-    ProfileScreen(),
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is int && args >= 0 && args < 4) {
+      _currentIndex = args;
+    }
+  }
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const FavoriteScreen(),
+    const MyWisataScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -54,6 +65,10 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite),
               label: 'Favorit',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_location_alt),
+              label: 'Kontribusi',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),

@@ -6,6 +6,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/add_wisata_screen.dart';
+import 'screens/my_wisata_screen.dart';
 import 'screens/detail_screen.dart';
 import 'models/wisata.dart';
 
@@ -35,6 +36,7 @@ class WisataApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const MainScreen(),
         '/add_wisata': (context) => const AddWisataScreen(),
+        '/my_wisata': (context) => const MyWisataScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detail') {

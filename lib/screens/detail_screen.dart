@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/wisata.dart';
+import '../services/firestore_service.dart';
 import '../widgets/wisata_image.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -12,6 +14,8 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  final String? _uid = FirebaseAuth.instance.currentUser?.uid;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +24,26 @@ class _DetailScreenState extends State<DetailScreen> {
           SliverAppBar(
             expandedHeight: 250,
             pinned: true,
+            actions: [
+              if (_uid != null)
+                StreamBuilder<Set<String>>(
+                  stream: FirestoreService.getFavoriteIds(_uid!),
+                  builder: (context, snapshot) {
+                    final isFav =
+                        snapshot.data?.contains(widget.wisata.id) ?? false;
+                    return IconButton(
+                      icon: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.white,
+                      ),
+                      onPressed: () {
+                        FirestoreService.toggleFavorite(
+                            _uid!, widget.wisata.id);
+                      },
+                    );
+                  },
+                ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               title: Text(widget.wisata.nama),
               background: Stack(
@@ -62,25 +86,33 @@ class _DetailScreenState extends State<DetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Rating dari user
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '${widget.wisata.rating}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          StreamBuilder<double>(
+                            stream: FirestoreService.getAverageRating(
+                                widget.wisata.id),
+                            builder: (context, snapshot) {
+                              final avg = snapshot.data ?? 0.0;
+                              return Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    avg > 0 ? avg.toStringAsFixed(1) : '-',
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -104,9 +136,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         child: Column(
                           children: [
                             Text(
-                              widget.wisata.hargaTiket == 0
-                                  ? 'Gratis'
-                                  : 'Rp ${widget.wisata.hargaTiket.toStringAsFixed(0)}',
+                              widget.wisata.formatHarga,
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -126,7 +156,14 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 24),
+
+                  // ===== USER RATING =====
+                  if (_uid != null) _buildUserRating(),
+
+                  const SizedBox(height: 20),
+
                   _buildInfoSection(
                     icon: Icons.location_on,
                     title: 'Lokasi',
@@ -149,7 +186,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   const SizedBox(height: 20),
                   const Text(
                     'Deskripsi',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -161,50 +199,103 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Ditambahkan ke wishlist!'),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.favorite_border),
-                          label: const Text('Wishlist'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+
+                  // ===== TOMBOL FAVORIT =====
+                  if (_uid != null)
+                    StreamBuilder<Set<String>>(
+                      stream: FirestoreService.getFavoriteIds(_uid!),
+                      builder: (context, snapshot) {
+                        final isFav =
+                            snapshot.data?.contains(widget.wisata.id) ??
+                                false;
+                        return SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              await FirestoreService.toggleFavorite(
+                                  _uid!, widget.wisata.id);
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(isFav
+                                        ? 'Dihapus dari favorit'
+                                        : 'Ditambahkan ke favorit'),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(
+                                isFav ? Icons.favorite : Icons.favorite_border),
+                            label: Text(isFav
+                                ? 'Hapus dari Favorit'
+                                : 'Tambah ke Favorit'),
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              backgroundColor: isFav
+                                  ? Colors.red[50]
+                                  : Theme.of(context).colorScheme.primary,
+                              foregroundColor:
+                                  isFav ? Colors.red : Colors.white,
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Pesan tiket disini!'),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.shopping_cart),
-                          label: const Text('Pesan'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                        );
+                      },
+                    ),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserRating() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Beri Rating',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          StreamBuilder<double?>(
+            stream:
+                FirestoreService.getUserRating(widget.wisata.id, _uid!),
+            builder: (context, snapshot) {
+              final userRating = snapshot.data ?? 0.0;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  final starValue = index + 1.0;
+                  return GestureDetector(
+                    onTap: () {
+                      FirestoreService.rateWisata(
+                          widget.wisata.id, _uid!, starValue);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Icon(
+                        starValue <= userRating
+                            ? Icons.star
+                            : Icons.star_border,
+                        color: Colors.amber,
+                        size: 36,
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
           ),
         ],
       ),
