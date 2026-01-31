@@ -45,7 +45,6 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
             ],
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(widget.wisata.nama),
               background: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -83,6 +82,14 @@ class _DetailScreenState extends State<DetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    widget.wisata.nama,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
