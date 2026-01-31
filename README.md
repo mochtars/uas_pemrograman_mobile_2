@@ -22,7 +22,7 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Splash | Login | Register |
 |--------|-------|----------|
-| ![Splash](screenshots/splash.png) | ![Login](screenshots/login.png) | ![Register](screenshots/register.png) |
+| ![Splash](screenshots/splash.jpeg) | ![Login](screenshots/login.jpeg) | ![Register](screenshots/register.jpeg) |
 
 ### Beranda
 - Carousel slider menampilkan wisata unggulan
@@ -32,7 +32,7 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Beranda | Semua Wisata |
 |---------|--------------|
-| ![Beranda](screenshots/beranda.png) | ![Semua Wisata](screenshots/semua_wisata.png) |
+| ![Beranda](screenshots/beranda.jpeg) | ![Semua Wisata](screenshots/semua_wisata.jpeg) |
 
 ### Pencarian
 - Halaman hasil pencarian terpisah dengan layout list card
@@ -41,7 +41,7 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Pencarian |
 |-----------|
-| ![Pencarian](screenshots/pencarian.png) |
+| ![Pencarian](screenshots/pencarian.jpeg) |
 
 ### Detail Wisata
 - Menampilkan gambar, nama, lokasi, deskripsi, jam buka, dan harga tiket
@@ -50,15 +50,13 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Detail Wisata |
 |---------------|
-| ![Detail](screenshots/detail.png) |
+| ![Detail](screenshots/detail_wisata.jpeg) |
 
 ### Wisata Favorit
 - Halaman khusus menampilkan daftar wisata yang telah difavoritkan
 - Data favorit tersimpan per-user di Firestore
 
-| Favorit |
-|---------|
-| ![Favorit](screenshots/favorit.png) |
+<!-- Screenshot favorit belum tersedia -->
 
 ### Kontribusi (CRUD Wisata)
 - Tambah wisata baru (nama, deskripsi, lokasi, gambar, harga tiket, jam buka)
@@ -68,7 +66,7 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Kontribusi | Tambah Wisata | Edit Wisata |
 |------------|---------------|-------------|
-| ![Kontribusi](screenshots/kontribusi.png) | ![Tambah](screenshots/tambah_wisata.png) | ![Edit](screenshots/edit_wisata.png) |
+| ![Kontribusi](screenshots/kontribusi.jpeg) | ![Tambah](screenshots/tambah_wisata.jpeg) | ![Edit](screenshots/edit_wisata.jpeg) |
 
 ### Notifikasi
 - Badge notifikasi pada icon bell di header
@@ -76,7 +74,7 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Notifikasi |
 |------------|
-| ![Notifikasi](screenshots/notifikasi.png) |
+| ![Notifikasi](screenshots/notifikasi.jpeg) |
 
 ### Profil
 - Halaman profil user
@@ -84,7 +82,7 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 
 | Profil | Tentang |
 |--------|---------|
-| ![Profil](screenshots/profil.png) | ![Tentang](screenshots/tentang.png) |
+| ![Profil](screenshots/profile.jpeg) | ![Tentang](screenshots/tentang.jpeg) |
 
 ### Lainnya
 - Navigation drawer dan bottom navigation bar
