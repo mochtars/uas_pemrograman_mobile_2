@@ -98,6 +98,12 @@ Aplikasi informasi wisata Indonesia berbasis Flutter dengan Firebase sebagai bac
 - Seed data otomatis saat database kosong
 - Halaman "Tentang Aplikasi"
 
+## Firebase
+
+| Firestore Wisata | Firebase Auth |
+|-------------------|---------------|
+| ![Firestore Wisata](screenshots/firebase_wisata.jpg) | ![Firebase Auth](screenshots/firebase_auth.jpg) |
+
 ## Teknologi yang digunakan
 
 | Komponen | Teknologi |
